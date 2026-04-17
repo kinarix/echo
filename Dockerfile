@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
@@ -17,7 +17,7 @@ RUN pwd && ls -al
 
 # Build runtime
 
-FROM golang:1.23-alpine
+FROM golang:1.26-alpine
 COPY --from=builder /build/bin/app /
 COPY --from=builder /go/bin/dlv /
 COPY config*.yaml /
