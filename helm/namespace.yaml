@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    authx-iap: enabled
+    kubernetes.io/metadata.name: echo
+  name: echo

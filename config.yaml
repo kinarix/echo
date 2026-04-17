@@ -1,0 +1,6 @@
+service: echo
+server:
+  port: 8080
+  preFork: false
+  Max: 45
+  ExpSecs: 60
