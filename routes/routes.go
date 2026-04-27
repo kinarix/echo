@@ -76,8 +76,8 @@ func Start() {
 		responseMap["method"] = c.Method()
 		responseMap["params"] = c.AllParams()
 		responseMap["query"] = c.Queries()
-		payload := make(map[string]interface{})
-
+		cookieDataRaw := c.Request().Header.Cookies()
+		responseMap["cookies"] = cookieDataRaw
 		//contentType := c.Request().Header.ContentType()
 
 		if form, filesErr := c.MultipartForm(); filesErr != nil {
@@ -90,11 +90,12 @@ func Start() {
 		}
 
 		if c.Method() != "GET" {
-
-			if err := c.BodyParser(&payload); err != nil {
-				payload["error"] = err.Error()
+			var body interface{}
+			if err := json.Unmarshal(c.Body(), &body); err != nil {
+				responseMap["body"] = map[string]interface{}{"error": err.Error()}
+			} else {
+				responseMap["body"] = body
 			}
-			responseMap["body"] = payload
 		}
 
 		headers := c.GetReqHeaders()
