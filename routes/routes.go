@@ -71,13 +71,16 @@ func Start() {
 
 		log.Trace().Interface("request-context", c.Context()).Send()
 
-		responseMap := make(map[string]interface{})
+		responseMap := make(map[string]any)
 		responseMap["path"] = c.Path()
 		responseMap["method"] = c.Method()
 		responseMap["params"] = c.AllParams()
 		responseMap["query"] = c.Queries()
-		cookieDataRaw := c.Request().Header.Cookies()
-		responseMap["cookies"] = cookieDataRaw
+		cookies := make(map[string]string)
+		for k, v := range c.Request().Header.Cookies() {
+			cookies[string(k)] = string(v)
+		}
+		responseMap["cookies"] = cookies
 		//contentType := c.Request().Header.ContentType()
 
 		if form, filesErr := c.MultipartForm(); filesErr != nil {
@@ -90,9 +93,9 @@ func Start() {
 		}
 
 		if c.Method() != "GET" {
-			var body interface{}
+			var body any
 			if err := json.Unmarshal(c.Body(), &body); err != nil {
-				responseMap["body"] = map[string]interface{}{"error": err.Error()}
+				responseMap["body"] = map[string]any{"error": err.Error()}
 			} else {
 				responseMap["body"] = body
 			}
